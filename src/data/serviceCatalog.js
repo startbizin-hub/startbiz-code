@@ -202,16 +202,29 @@ export const megaMenus = [
 ];
 
 const imageMap = {
-  'gst-registration': asset('/images/services/service-1.webp'),
-  'limited-liability-partnership-registration': asset('/images/services/service-2.webp'),
-  'shop-and-establishment-registration': asset('/images/services/service-3.webp'),
-  'fssai-registration': asset('/images/services/service-4.webp'),
-  'partnership-firm-registration': asset('/images/services/service-5.webp'),
-  'udyam-msme-registration': asset('/images/services/service-6.webp'),
-  'one-person-company-registration': asset('/images/services/service-7.webp'),
-  'private-limited-company-registration': asset('/images/services/service-8.webp'),
-  'trademark-registration': asset('/images/services/service-9.webp'),
-  'import-export-code-registration': asset('/images/services/service-11.webp'),
+  'gst-registration': asset('/images/services/gst-registration.png'),
+  'limited-liability-partnership-registration': asset(
+    '/images/services/limited-liability-partnership-registration.png'
+  ),
+  'shop-and-establishment-registration': asset(
+    '/images/services/shop-and-establishment-registration.png'
+  ),
+  'fssai-registration': asset('/images/services/fssai-registration.png'),
+  'partnership-firm-registration': asset(
+    '/images/services/partnership-firm-registration.png'
+  ),
+  'udyam-msme-registration': asset('/images/services/udyam-msme-registration.png'),
+  'one-person-company-registration': asset(
+    '/images/services/one-person-company-registration.png'
+  ),
+  'private-limited-company-registration': asset(
+    '/images/services/private-limited-company-registration.png'
+  ),
+  'trademark-registration': asset('/images/services/trademark-registration.png'),
+  'import-export-code-registration': asset(
+    '/images/services/import-export-code-registration.png'
+  ),
+  'iso-certification': asset('/images/services/iso-certification.png'),
 };
 
 const featuredSlugs = new Set(Object.keys(imageMap));
@@ -441,7 +454,7 @@ extraServices.forEach(({ cat, id, title }) => {
     catalogServices.push({
       id: nextId++,
       ...enrichService(title, id, cat, 'Additional Services'),
-      image: title === 'ISO Certification' ? asset('/images/services/service-10.webp') : undefined,
+      image: title === 'ISO Certification' ? asset('/images/services/iso-certification.png') : undefined,
       featured: title === 'ISO Certification',
     });
   }

@@ -114,7 +114,7 @@ export function organizationSchema() {
     '@type': 'ProfessionalService',
     '@id': `${SITE_URL}/#organization`,
     name: brand.name,
-    url: SITE_URL,
+    url: `${SITE_URL}/`,
     logo: absoluteUrl('/images/logo-light.png'),
     image: DEFAULT_OG_IMAGE,
     description: brand.seoDescription,
@@ -144,15 +144,10 @@ export function websiteSchema() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     '@id': `${SITE_URL}/#website`,
-    url: SITE_URL,
+    url: `${SITE_URL}/`,
     name: brand.name,
     description: brand.seoDescription,
     publisher: { '@id': `${SITE_URL}/#organization` },
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${SITE_URL}/finder`,
-      'query-input': 'required name=search_term_string',
-    },
   };
 }
 

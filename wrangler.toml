@@ -4,7 +4,8 @@ compatibility_date = "2026-09-25"
 # Static CRA build. Physical prerendered HTML shells (build/**/index.html) win for
 # crawlers; SPA fallback covers any remaining client routes. Do NOT add
 # public/_redirects with `/* /index.html 200`.
+# Canonicals have no trailing slash, so do not 307 /finder to /finder/.
 [assets]
 directory = "./build"
 not_found_handling = "single-page-application"
-html_handling = "auto-trailing-slash"
+html_handling = "drop-trailing-slash"

@@ -32,6 +32,104 @@ function extractQuoted(re, text) {
   return out;
 }
 
+function extractStringProp(source, key) {
+  const re = new RegExp(
+    `${key}:\\s*\\n?\\s*(['"])((?:\\\\.|(?!\\1)[\\s\\S])*?)\\1`
+  );
+  const match = source.match(re);
+  if (!match) return '';
+  return match[2].replace(/\\'/g, "'").replace(/\\"/g, '"');
+}
+
+function pageUrl(routePath) {
+  return `${SITE}${routePath === '/' ? '/' : routePath}`;
+}
+
+function breadcrumbLd(items) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: pageUrl(item.path),
+    })),
+  };
+}
+
+function webPageLd(route) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: route.title,
+    description: route.description,
+    url: pageUrl(route.canonicalPath || route.path),
+    isPartOf: { '@id': `${SITE}/#website` },
+    about: { '@id': `${SITE}/#organization` },
+  };
+}
+
+function organizationLd(description, email) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ProfessionalService',
+    '@id': `${SITE}/#organization`,
+    name: 'startbiz.in',
+    url: `${SITE}/`,
+    logo: `${SITE}/images/logo-light.png`,
+    image: `${SITE}/images/cover.webp`,
+    description,
+    telephone: '+917519221199',
+    email,
+    areaServed: { '@type': 'State', name: 'Maharashtra' },
+    address: {
+      '@type': 'PostalAddress',
+      addressRegion: 'Maharashtra',
+      addressCountry: 'IN',
+    },
+    sameAs: ['https://wa.me/917519221199'],
+    serviceType: [
+      'Business Consulting Services',
+      'Company Registration',
+      'GST Registration',
+      'MSME Registration',
+      'Trademark Registration',
+      'FSSAI Licence',
+      'Shop Act Registration',
+    ],
+  };
+}
+
+function websiteLd(description) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${SITE}/#website`,
+    url: `${SITE}/`,
+    name: 'startbiz.in',
+    description,
+    publisher: { '@id': `${SITE}/#organization` },
+  };
+}
+
+function serviceDescription(title) {
+  return `Get expert help for ${title} from startbiz.in. Business consulting services for company registration, compliance and filings across Maharashtra, India.`;
+}
+
+function serviceLd(title, path, description, categoryName) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: title,
+    description,
+    url: pageUrl(path),
+    provider: { '@id': `${SITE}/#organization` },
+    areaServed: { '@type': 'State', name: 'Maharashtra' },
+    serviceType: categoryName || 'Business Registration',
+  };
+}
+
 function collectRoutes() {
   const catalog = read('src/data/serviceCatalog.js');
   const knowledge = read('src/data/knowledge.js');
@@ -39,11 +137,12 @@ function collectRoutes() {
   const content = read('src/data/content.js');
 
   const seoTitle =
-    (content.match(/seoTitle:\s*\n?\s*'([^']+)'/) || [])[1] ||
+    extractStringProp(content, 'seoTitle') ||
     'startbiz.in | Business Registrations, Licences & Solutions in Maharashtra';
   const seoDescription =
-    (content.match(/seoDescription:\s*\n?\s*'([^']+)'/) || [])[1] ||
-    'Starting or growing a business? Startbiz helps you find the right registrations, licences and business solutions across Maharashtra.';
+    extractStringProp(content, 'seoDescription') ||
+    "Don't know what your business needs? Startbiz helps you understand which registrations, licences and business services may be relevant — GST, MSME, Shop Act, company registration, FSSAI, trademark and more across Maharashtra.";
+  const email = extractStringProp(content, 'email') || 'startbiz.in@gmail.com';
 
   const routes = [
     {
@@ -51,110 +150,174 @@ function collectRoutes() {
       title: seoTitle,
       description: seoDescription,
       priority: '1.0',
+      jsonLd: [organizationLd(seoDescription, email), websiteLd(seoDescription)],
     },
     {
       path: '/finder',
-      title: 'Find My Business Solution | startbiz.in',
+      title: 'Find My Business Requirements | startbiz.in',
       description:
-        'Answer a few questions and get a practical registration roadmap for GST, company setup, licences and compliance in Maharashtra.',
+        'Answer a few questions to see which registrations, licences and compliances may apply to your business. Guidance only — Startbiz can verify.',
       priority: '0.9',
     },
     {
       path: '/compare',
       title: 'Compare Business Structures | startbiz.in',
       description:
-        'Compare proprietorship, LLP and Private Limited company options for owners, liability, compliance and growth.',
+        'Compare proprietorship, LLP and private limited company on owners, liability, compliance and funding — then talk to Startbiz.',
       priority: '0.8',
     },
     {
       path: '/knowledge',
       title: 'Business Knowledge Centre | startbiz.in',
       description:
-        'Plain-language guides on GST, MSME, FSSAI, trademark and starting a business in India.',
+        'Guides on business structure, GST, Udyam, FSSAI and trademarks — written to help you decide what may apply before you file.',
       priority: '0.8',
     },
     {
       path: '/industries',
-      title: 'Industry Business Solutions | startbiz.in',
+      title: 'Industry Solutions | startbiz.in',
       description:
-        'Typical registration paths for restaurants, cloud kitchens, ecommerce, freelancers and more across Maharashtra.',
+        'Typical registration paths for restaurants, cloud kitchens, e-commerce, freelancers and construction businesses in India.',
       priority: '0.8',
     },
     {
       path: '/privacy-policy',
       title: 'Privacy Policy | startbiz.in',
       description:
-        'How Startbiz.in collects, uses, stores and protects information provided through our website and service channels.',
+        'How Startbiz.in collects, uses, stores and protects information provided through our website, forms, WhatsApp, email and related channels.',
       priority: '0.4',
     },
     {
       path: '/refund-cancellation-policy',
       title: 'Refund & Cancellation Policy | startbiz.in',
       description:
-        'Refund and cancellation terms for Startbiz.in business registration and professional assistance services.',
+        'Startbiz.in refund and cancellation terms for business registration, licensing, certification and related professional assistance services.',
       priority: '0.4',
     },
     {
       path: '/terms-and-conditions',
       title: 'Terms & Conditions | startbiz.in',
       description:
-        'Terms governing use of the Startbiz.in website and business registration, compliance and related services.',
+        'Terms governing access to and use of the Startbiz.in website and business registration, compliance and related professional assistance services.',
       priority: '0.4',
     },
-  ];
+  ].map((route) => ({
+    ...route,
+    ogType: 'website',
+    jsonLd: route.jsonLd || webPageLd(route),
+  }));
 
   const categoryBlocks = [
     ...catalog.matchAll(
       /id:\s*'([^']+)'[\s\S]*?label:\s*'([^']+)'[\s\S]*?path:\s*'([^']+)'[\s\S]*?seoTitle:\s*\n?\s*'([^']+)'[\s\S]*?seoDescription:\s*\n?\s*'([^']+)'/g
     ),
   ];
+  const menuById = new Map();
   categoryBlocks.forEach((m) => {
-    routes.push({
-      path: m[3],
+    const menu = { id: m[1], label: m[2], path: m[3], items: [] };
+    menuById.set(menu.id, menu);
+    const route = {
+      path: menu.path,
       title: m[4],
       description: m[5],
       priority: '0.9',
-    });
+      ogType: 'website',
+    };
+    route.jsonLd = breadcrumbLd([
+      { name: 'Home', path: '/' },
+      { name: menu.label, path: menu.path },
+    ]);
+    routes.push(route);
   });
 
-  const serviceTitles = extractQuoted(/'\s*([A-Za-z0-9][^']{3,80})'\s*,?/g, catalog)
-    .filter(
-      (t) =>
-        /Registration|Company|Licence|License|Certification|Filing|Trademark|GST|Udyam|FSSAI|Import|Shop|Partnership|Proprietorship|LLP|OPC|DSC|ISO|Tax|Return|PAN|TAN|EPF|ESI|GeM|Branding|Funding|Consultancy|Plan|Process|Dissolve|Conversion|Change|Closure|Objection|Opposition|Assignment|Renewal|Patent|Copyright|Design/i.test(
-          t
-        )
-    )
-    .filter((t, i, arr) => arr.indexOf(t) === i);
-
-  // Prefer titles from group items arrays only
-  const itemTitles = [];
-  const itemBlocks = catalog.matchAll(/items:\s*\[([\s\S]*?)\]/g);
-  for (const block of itemBlocks) {
-    extractQuoted(/'([^']+)'/g, block[1]).forEach((t) => itemTitles.push(t));
+  function pushService(title, categoryName, categoryPath, options = {}) {
+    const slug = options.slug || slugify(title);
+    const canonicalSlug = options.canonicalSlug || slug;
+    const path = `/services/${slug}`;
+    const canonicalPath = `/services/${canonicalSlug}`;
+    if (routes.some((r) => r.path === path)) return;
+    const description = serviceDescription(title);
+    const route = {
+      path,
+      canonicalPath: canonicalPath === path ? undefined : canonicalPath,
+      title: `${title} | startbiz.in Business Consulting Services`,
+      description,
+      keywords: [
+        title.toLowerCase(),
+        'business consulting services',
+        'startbiz.in',
+        categoryName ? categoryName.toLowerCase() : '',
+        'Maharashtra',
+        'India',
+      ]
+        .filter(Boolean)
+        .join(', '),
+      priority: options.priority || '0.8',
+      includeInSitemap: canonicalPath === path,
+      ogType: 'website',
+    };
+    route.jsonLd = [
+      breadcrumbLd([
+        { name: 'Home', path: '/' },
+        ...(categoryPath ? [{ name: categoryName, path: categoryPath }] : []),
+        { name: title, path: canonicalPath },
+      ]),
+      serviceLd(title, canonicalPath, description, categoryName),
+    ];
+    routes.push(route);
   }
-  const uniqueServices = [...new Set(itemTitles.length ? itemTitles : serviceTitles)];
 
-  uniqueServices.forEach((title) => {
-    const slug = slugify(title);
-    routes.push({
-      path: `/services/${slug}`,
-      title: `${title} | startbiz.in Business Consulting Services`,
-      description: `Get expert help for ${title} from startbiz.in. Business consulting for registrations, licences and compliance across Maharashtra, India.`,
-      priority: '0.8',
-    });
+  const menuStarts = [...categoryBlocks];
+  menuStarts.forEach((m, index) => {
+    const start = m.index + m[0].length;
+    const end = index + 1 < menuStarts.length ? menuStarts[index + 1].index : catalog.length;
+    const chunk = catalog.slice(start, end);
+    const menu = menuById.get(m[1]);
+    for (const block of chunk.matchAll(/items:\s*\[([\s\S]*?)\]/g)) {
+      extractQuoted(/'([^']+)'/g, block[1]).forEach((title) => {
+        menu.items.push(title);
+        pushService(title, menu.label, menu.path);
+      });
+    }
   });
 
-  // Extra catalogue services from extraServices in catalog
-  extractQuoted(/title:\s*'([^']+)'/g, catalog).forEach((title) => {
-    const slug = slugify(title);
-    if (routes.some((r) => r.path === `/services/${slug}`)) return;
-    routes.push({
-      path: `/services/${slug}`,
-      title: `${title} | startbiz.in Business Consulting Services`,
-      description: `Get expert help for ${title} from startbiz.in across Maharashtra, India.`,
-      priority: '0.7',
-    });
+  categoryBlocks.forEach((m) => {
+    const menu = menuById.get(m[1]);
+    const route = routes.find((r) => r.path === menu.path);
+    if (!route) return;
+    route.keywords = [
+      menu.label,
+      'business consulting services',
+      'startbiz.in',
+      ...menu.items.slice(0, 8),
+    ].join(', ');
   });
+
+  for (const extra of catalog.matchAll(
+    /\{\s*cat:\s*'([^']+)',\s*id:\s*'([^']+)',\s*title:\s*'([^']+)'\s*\}/g
+  )) {
+    const menu = menuById.get(extra[2]);
+    pushService(extra[3], extra[1], menu ? menu.path : '', { priority: '0.7' });
+  }
+
+  const aliasBlock = catalog.match(/const slugAliases = \{([\s\S]*?)\};/);
+  if (aliasBlock) {
+    for (const pair of aliasBlock[1].matchAll(/'([^']+)':\s*'([^']+)'/g)) {
+      const target = routes.find((r) => r.path === `/services/${pair[2]}`);
+      if (!target) continue;
+      pushService(target.title.split(' | ')[0], '', '', {
+        slug: pair[1],
+        canonicalSlug: pair[2],
+        priority: '0.3',
+      });
+      const alias = routes.find((r) => r.path === `/services/${pair[1]}`);
+      if (!alias) continue;
+      alias.title = target.title;
+      alias.description = target.description;
+      alias.keywords = target.keywords;
+      alias.jsonLd = target.jsonLd;
+    }
+  }
 
   extractQuoted(/slug:\s*'([^']+)'/g, knowledge).forEach((slug) => {
     const titleMatch = knowledge.match(
@@ -163,13 +326,33 @@ function collectRoutes() {
     const excerptMatch = knowledge.match(
       new RegExp(`slug:\\s*'${slug}'[\\s\\S]*?excerpt:\\s*\\n?\\s*'([^']+)'`)
     );
+    const title = titleMatch ? titleMatch[1] : slug;
+    const description =
+      excerptMatch?.[1] ||
+      'Business registration and compliance guidance from startbiz.in.';
+    const path = `/knowledge/${slug}`;
     routes.push({
-      path: `/knowledge/${slug}`,
-      title: `${titleMatch ? titleMatch[1] : slug} | startbiz.in`,
-      description:
-        excerptMatch?.[1] ||
-        'Business registration and compliance guidance from startbiz.in.',
+      path,
+      title: `${title} | startbiz.in`,
+      description,
       priority: '0.7',
+      ogType: 'article',
+      jsonLd: [
+        breadcrumbLd([
+          { name: 'Home', path: '/' },
+          { name: 'Knowledge', path: '/knowledge' },
+          { name: title, path },
+        ]),
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: title,
+          description,
+          author: { '@type': 'Organization', name: 'startbiz.in' },
+          publisher: { '@type': 'Organization', name: 'startbiz.in' },
+          mainEntityOfPage: pageUrl(path),
+        },
+      ],
     });
   });
 
@@ -180,14 +363,24 @@ function collectRoutes() {
     const summaryMatch = industries.match(
       new RegExp(`slug:\\s*'${slug}'[\\s\\S]*?summary:\\s*\\n?\\s*'([^']+)'`)
     );
-    routes.push({
-      path: `/industries/${slug}`,
-      title: `${titleMatch ? titleMatch[1] : slug} Registrations | startbiz.in`,
-      description:
-        summaryMatch?.[1] ||
-        'Industry-specific business registration guidance from startbiz.in.',
+    const name = titleMatch ? titleMatch[1] : slug;
+    const description =
+      summaryMatch?.[1] ||
+      'Industry-specific business registration guidance from startbiz.in.';
+    const path = `/industries/${slug}`;
+    const route = {
+      path,
+      title: `${name} Registrations | startbiz.in`,
+      description,
       priority: '0.7',
-    });
+      ogType: 'website',
+    };
+    route.jsonLd = breadcrumbLd([
+      { name: 'Home', path: '/' },
+      { name: 'Industries', path: '/industries' },
+      { name, path },
+    ]);
+    routes.push(route);
   });
 
   // Dedupe by path
@@ -208,7 +401,8 @@ function escapeHtml(s) {
 }
 
 function writeSitemap(routes) {
-  const body = routes
+  const listed = routes.filter((r) => r.includeInSitemap !== false);
+  const body = listed
     .map(
       (r) => `  <url>
     <loc>${SITE}${r.path === '/' ? '/' : r.path}</loc>
@@ -227,11 +421,16 @@ ${body}
   if (fs.existsSync(BUILD)) {
     fs.writeFileSync(path.join(BUILD, 'sitemap.xml'), xml);
   }
-  return routes.length;
+  return listed.length;
+}
+
+function jsonLdTag(data) {
+  const json = JSON.stringify(data, null, 2).replace(/</g, '\\u003c');
+  return `<script type="application/ld+json" id="startbiz-jsonld">\n${json}\n    </script>`;
 }
 
 function injectMeta(html, route) {
-  const url = `${SITE}${route.path === '/' ? '/' : route.path}`;
+  const url = pageUrl(route.canonicalPath || route.path);
   const image = `${SITE}/images/cover.webp`;
   const title = escapeHtml(route.title);
   const description = escapeHtml(route.description);
@@ -242,9 +441,19 @@ function injectMeta(html, route) {
     /<meta\s+name="description"\s+content="[^"]*"\s*\/>/i,
     `<meta name="description" content="${description}" />`
   );
+  if (route.keywords) {
+    out = out.replace(
+      /<meta\s+name="keywords"\s+content="[^"]*"\s*\/>/i,
+      `<meta name="keywords" content="${escapeHtml(route.keywords)}" />`
+    );
+  }
   out = out.replace(
     /<link\s+rel="canonical"\s+href="[^"]*"\s*\/>/i,
     `<link rel="canonical" href="${url}" />`
+  );
+  out = out.replace(
+    /<meta\s+property="og:type"\s+content="[^"]*"\s*\/>/i,
+    `<meta property="og:type" content="${escapeHtml(route.ogType || 'website')}" />`
   );
   out = out.replace(
     /<meta\s+property="og:title"\s+content="[^"]*"\s*\/>/i,
@@ -274,6 +483,12 @@ function injectMeta(html, route) {
     /<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/>/i,
     `<meta name="twitter:image" content="${image}" />`
   );
+  if (route.jsonLd) {
+    out = out.replace(
+      /<script\s+type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/i,
+      jsonLdTag(route.jsonLd)
+    );
+  }
 
   // Help non-JS agents: visible fallback text
   if (!out.includes('data-seo-fallback')) {

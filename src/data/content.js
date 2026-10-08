@@ -56,8 +56,8 @@ export const brand = {
   whatsapp: '917519221199',
   whatsappMessage:
     'Hello Startbiz, I need help with my business.\nMy business type is ________.\nI want to ________.',
-  email: 'starbiz.in@gmail.com',
-  emailHref: 'mailto:starbiz.in@gmail.com',
+  email: 'startbiz.in@gmail.com',
+  emailHref: 'mailto:startbiz.in@gmail.com',
   contactPerson: 'Amol Ghoderao',
   logo: asset('/images/logo-transparent.png'),
   logoDark: asset('/images/logo-transparent.png'),
@@ -190,7 +190,7 @@ export const services = [
     id: 1,
     slug: 'gst-registration',
     title: 'GST Registration',
-    image: asset('/images/services/service-1.webp'),
+    image: asset('/images/services/gst-registration.png'),
     summary:
       'GST registration is essential for businesses operating in India. startbiz.in business consulting services help you complete GST registration quickly, accurately, and with full documentation support.',
     points: [
@@ -205,7 +205,7 @@ export const services = [
     id: 2,
     slug: 'llp-registration',
     title: 'LLP Registration',
-    image: asset('/images/services/service-2.webp'),
+    image: asset('/images/services/limited-liability-partnership-registration.png'),
     summary:
       'LLP registration made easy with startbiz.in. Our business consulting services guide you through Limited Liability Partnership registration with full compliance support.',
     points: [
@@ -220,7 +220,7 @@ export const services = [
     id: 3,
     slug: 'shop-act-registration',
     title: 'Shop Act Registration',
-    image: asset('/images/services/service-3.webp'),
+    image: asset('/images/services/shop-and-establishment-registration.png'),
     summary:
       'Shop Act registration is required for businesses to operate legally in their state. startbiz.in simplifies Shop Act registration with expert documentation and compliance guidance.',
     points: [
@@ -235,7 +235,7 @@ export const services = [
     id: 4,
     slug: 'fssai-food-license',
     title: 'FSSAI Food License',
-    image: asset('/images/services/service-4.webp'),
+    image: asset('/images/services/fssai-registration.png'),
     summary:
       'FSSAI food license is essential for food businesses in India. Get fast FSSAI registration and renewal support through startbiz.in business consulting services.',
     points: [
@@ -250,7 +250,7 @@ export const services = [
     id: 5,
     slug: 'partnership-firm-registration',
     title: 'Partnership Firm Registration',
-    image: asset('/images/services/service-5.webp'),
+    image: asset('/images/services/partnership-firm-registration.png'),
     summary:
       'Partnership firm registration establishes a formal business structure. startbiz.in handles partnership registration paperwork and legal compliance for entrepreneurs across India.',
     points: [
@@ -265,7 +265,7 @@ export const services = [
     id: 6,
     slug: 'msme-registration',
     title: 'MSME Registration',
-    image: asset('/images/services/service-6.webp'),
+    image: asset('/images/services/udyam-msme-registration.png'),
     summary:
       'MSME registration helps small and medium enterprises unlock government schemes and benefits. startbiz.in streamlines MSME registration for startups and growing businesses across India.',
     points: [
@@ -280,7 +280,7 @@ export const services = [
     id: 7,
     slug: 'one-person-company-registration',
     title: 'One Person Company Registration',
-    image: asset('/images/services/service-7.webp'),
+    image: asset('/images/services/one-person-company-registration.png'),
     summary:
       'One Person Company (OPC) registration lets sole founders enjoy limited liability. startbiz.in provides startup consulting for fast, compliant OPC registration in India.',
     points: [
@@ -295,7 +295,7 @@ export const services = [
     id: 8,
     slug: 'private-limited-company-registration',
     title: 'Private Limited Company Registration',
-    image: asset('/images/services/service-8.webp'),
+    image: asset('/images/services/private-limited-company-registration.png'),
     summary:
       'Private limited company registration made simple with startbiz.in. Our business consulting experts handle documentation, compliance, and filings so you can launch faster.',
     points: [
@@ -310,7 +310,7 @@ export const services = [
     id: 9,
     slug: 'trademark-registration',
     title: 'Trademark Registration',
-    image: asset('/images/services/service-9.webp'),
+    image: asset('/images/services/trademark-registration.png'),
     summary:
       'Trademark registration protects your business name, logo, brand name, and tagline. Get expert trademark registration support from startbiz.in business consulting services.',
     about:
@@ -354,7 +354,7 @@ export const services = [
     id: 10,
     slug: 'iso-certification',
     title: 'ISO Certification',
-    image: asset('/images/services/service-10.webp'),
+    image: asset('/images/services/iso-certification.png'),
     summary:
       'ISO certification demonstrates your business quality and reliability. startbiz.in helps startups and MSMEs obtain ISO certification for tenders, trust, and market growth.',
     about:
@@ -407,7 +407,7 @@ export const services = [
     id: 11,
     slug: 'import-export-registration',
     title: 'Import Export Registration (IEC)',
-    image: asset('/images/services/service-11.webp'),
+    image: asset('/images/services/import-export-code-registration.png'),
     summary:
       'IEC (Import Export Code) is required to import or export from India. Get Import Export registration with DGFT filing support from startbiz.in business consulting experts.',
     about:

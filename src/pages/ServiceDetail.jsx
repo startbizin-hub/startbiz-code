@@ -108,45 +108,6 @@ function ChecklistSection({ label, title, items }) {
   );
 }
 
-function EnquiryCard({ service }) {
-  return (
-    <aside className="rounded-xl border border-[#dbdbdb] bg-white p-5 shadow-soft sm:p-6">
-      <p className="text-xs font-semibold uppercase tracking-wider text-brand-accent">
-        Get started
-      </p>
-      <h2 className="mt-2 font-display text-xl font-semibold text-brand-text">
-        Talk to a business consultant
-      </h2>
-      <p className="mt-2 text-sm text-brand-text-soft">
-        Share your requirement for {service.title}. Our team will guide you with
-        the right next steps.
-      </p>
-      <ul className="mt-5 space-y-3 text-sm">
-        <li>
-          <a href={brand.phoneHref} className="font-semibold text-brand-primary hover:underline">
-            {brand.phone}
-          </a>
-        </li>
-        <li>
-          <a href={brand.emailHref} className="break-all font-semibold text-brand-primary hover:underline">
-            {brand.email}
-          </a>
-        </li>
-        <li className="text-brand-text-soft">Contact: {brand.contactPerson}</li>
-        <li className="text-brand-text-soft">Mon–Sat · 09:00 – 18:00</li>
-      </ul>
-      <a
-        href={getWhatsAppUrl(`Get Started — ${service.title}`)}
-        target="_blank"
-        rel="noreferrer"
-        className="btn-primary mt-5 w-full"
-      >
-        WhatsApp
-      </a>
-    </aside>
-  );
-}
-
 export default function ServiceDetail() {
   const { slug } = useParams();
   const service = getServiceBySlug(slug);
@@ -263,9 +224,16 @@ export default function ServiceDetail() {
               </div>
             </div>
 
-            <div>
-              <EnquiryCard service={service} />
-            </div>
+            {service.image ? (
+              <div className="overflow-hidden rounded-xl border border-[#dbdbdb] bg-white p-2 shadow-soft">
+                <img
+                  src={service.image}
+                  alt={`${service.title} — ${brand.name}`}
+                  className="h-auto w-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+            ) : null}
           </div>
         </div>
       </section>
